@@ -23,21 +23,27 @@ export async function login(req: Request, res: Response) {
   if (!match) {
     throw new UnauthorizedError("Invalid email or password");
   }
-
-  const result = await db
-    .select({
-      privilegeName: privileges.name,
-    })
-    .from(adminPrivileges)
-    .innerJoin(privileges, eq(adminPrivileges.privilegeId, privileges.id))
-    .where(eq(adminPrivileges.adminId, admin.id));
-
-  const privilegeNames = result.map((r) => r.privilegeName);
-
-  const token = generateToken({
-    id: admin.id,
-    roles: privilegeNames,
-  });
+  let privilegeNames;
+  let token;
+  if (!admin.isSuperAdmin) {
+    const result = await db
+      .select({
+        privilegeName: privileges.name,
+      })
+      .from(adminPrivileges)
+      .innerJoin(privileges, eq(adminPrivileges.privilegeId, privileges.id))
+      .where(eq(adminPrivileges.adminId, admin.id));
+    privilegeNames = result.map((r) => r.privilegeName);
+    token = generateToken({
+      id: admin.id,
+      roles: privilegeNames,
+    });
+  } else {
+    token = generateToken({
+      id: admin.id,
+      roles: ["super_admin"],
+    });
+  }
 
   SuccessResponse(
     res,

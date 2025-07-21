@@ -9,13 +9,16 @@ import {
   date,
   mysqlEnum,
 } from "drizzle-orm/mysql-core";
+import { getCurrentEgyptTime } from "../utils/timeZone";
 
 export const admins = mysqlTable("admins", {
   id: int("id").autoincrement().primaryKey(),
   name: varchar("name", { length: 255 }).notNull(),
-  email: varchar("email", { length: 255 }).notNull(),
+  email: varchar("email", { length: 255 }).unique().notNull(),
   password: varchar("password", { length: 255 }).notNull(),
   phoneNumber: varchar("phone_number", { length: 255 }).notNull(),
+  imagePath: varchar("image_path", { length: 255 }),
+  isSuperAdmin: boolean("is_super_admin").default(false),
 });
 
 export const privileges = mysqlTable("privileges", {
@@ -39,7 +42,7 @@ export const categories = mysqlTable("categories", {
 export const users = mysqlTable("users", {
   id: int("id").autoincrement().primaryKey(),
   name: varchar("name", { length: 255 }).notNull(),
-  email: varchar("email", { length: 255 }).notNull(),
+  email: varchar("email", { length: 255 }).unique().notNull(),
   password: varchar("password", { length: 255 }),
   phoneNumber: varchar("phoneNumber", { length: 255 }),
 });
@@ -176,4 +179,10 @@ export const promoCodeUsers = mysqlTable("promo_code_users", {
   id: int("id").autoincrement().primaryKey(),
   promoCodeId: int("promo_code_id").references(() => promoCode.id),
   userId: int("user_id").references(() => users.id),
+});
+
+export const emailVerifications = mysqlTable("email_verifications", {
+  userId: int("user_id").primaryKey(),
+  code: varchar("code", { length: 6 }).notNull(),
+  createdAt: date("created_at").default(getCurrentEgyptTime()),
 });

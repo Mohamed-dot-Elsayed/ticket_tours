@@ -9,6 +9,7 @@ import compression from "compression";
 import passport from "passport";
 import cookieParser from "cookie-parser";
 import AppRoute from "./routes";
+import path from "path";
 dotenv.config();
 
 const app = express();
@@ -28,6 +29,7 @@ app.use(
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 app.use(compression());
 app.use(passport.initialize());
 app.get("/api/test", (req, res, next) => {

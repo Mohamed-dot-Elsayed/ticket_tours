@@ -1,5 +1,15 @@
 import { Router } from "express";
 import AuthRoute from "./auth";
+import UsersRoute from "./users";
+import AdminsRoute from "./admins";
+import PrivilegesRoute from "./privileges";
+import CategoryRoute from "./categories";
+import PromoCodeRoute from "./promocodes";
 const router = Router();
 router.use("/auth", AuthRoute);
+router.use("/users", UsersRoute);
+router.use("/admins", AdminsRoute);
+router.use("/privileges", PrivilegesRoute);
+router.use("/categories", CategoryRoute);
+router.use("/promocodes", PromoCodeRoute);
 export default router;

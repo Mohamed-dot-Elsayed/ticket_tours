@@ -2,10 +2,10 @@ import { toZonedTime, format } from "date-fns-tz";
 
 const EGYPT_TIMEZONE = "Africa/Cairo";
 
-export function getCurrentEgyptTime(): string {
+export function getCurrentEgyptTime(): Date {
   const now = new Date();
   const time = toZonedTime(now, EGYPT_TIMEZONE);
-  return format(time, "dd/MM/yyyy HH:mm", { timeZone: EGYPT_TIMEZONE });
+  return time;
 }
 
 export function convertToEgyptTime(date: Date): Date {
