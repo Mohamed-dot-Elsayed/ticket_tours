@@ -1,0 +1,12 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const auth_1 = require("../../../controllers/users/auth");
+const catchAsync_1 = require("../../../utils/catchAsync");
+const validation_1 = require("../../../middlewares/validation");
+const auth_2 = require("../../../validators/users/auth");
+const router = (0, express_1.Router)();
+router.post("/forget-password", (0, validation_1.validate)(auth_2.forgetPasswordSchema), (0, catchAsync_1.catchAsync)(auth_1.forgetPassword));
+router.post("/verify-code", (0, validation_1.validate)(auth_2.verifyCodeSchema), (0, catchAsync_1.catchAsync)(auth_1.verifyCode));
+router.post("/reset-password", (0, validation_1.validate)(auth_2.resetPasswordSchema), (0, catchAsync_1.catchAsync)(auth_1.resetPassword));
+exports.default = router;

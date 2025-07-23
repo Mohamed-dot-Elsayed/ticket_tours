@@ -18,11 +18,11 @@ import { authenticated } from "../../middlewares/authenticated";
 
 const router = Router();
 
-router.use(authenticated);
+// router.use(authenticated);
 router
   .route("/")
   .post(
-    authorizePermissions("user-add"),
+    // authorizePermissions("user-add"),
     validate(createUserSchema),
     catchAsync(createUser)
   )

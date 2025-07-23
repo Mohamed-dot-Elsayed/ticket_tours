@@ -69,6 +69,12 @@ export const tours = mysqlTable("tours", {
   priceId: int("price_id").references(() => tourPrice.id),
 });
 
+export const tourImages = mysqlTable("tour_images", {
+  id: int("id").autoincrement().primaryKey(),
+  tourId: int("tour_id").references(() => tours.id),
+  imagePath: varchar("image_path", { length: 255 }),
+});
+
 export const tourDiscounts = mysqlTable("tour_discounts", {
   id: int("id").autoincrement().primaryKey(),
   tourId: int("tour_id")
@@ -81,8 +87,6 @@ export const tourDiscounts = mysqlTable("tour_discounts", {
   ]).notNull(),
   type: mysqlEnum("type", ["percent", "fixed"]).notNull(),
   value: decimal("value", { precision: 5, scale: 2 }).notNull(),
-  startDate: date("start_date"),
-  endDate: date("end_date"),
   minPeople: int("min_people").default(0),
   maxPeople: int("max_people"),
 });
@@ -112,6 +116,8 @@ export const tourSchedules = mysqlTable("tour_schedules", {
 
   date: date("date").notNull(),
   availableSeats: int("available_seats").notNull(),
+  startDate: date("start_date").notNull(), // Optional if your logic needs range per schedule
+  endDate: date("end_date").notNull(),
 });
 
 export const tourPrice = mysqlTable("tour_price", {
@@ -185,4 +191,63 @@ export const emailVerifications = mysqlTable("email_verifications", {
   userId: int("user_id").primaryKey(),
   code: varchar("code", { length: 6 }).notNull(),
   createdAt: date("created_at").default(getCurrentEgyptTime()),
+});
+
+export const extras = mysqlTable("extras", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+});
+
+export const tourExtras = mysqlTable("tour_extras", {
+  id: int("id").autoincrement().primaryKey(),
+  tourId: int("tour_id").references(() => tours.id),
+  extraId: int("extra_id").references(() => extras.id),
+  priceId: int("price_id").references(() => tourPrice.id),
+});
+
+export const userTour = mysqlTable("user_tour", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("user_id").references(() => users.id),
+  tourId: int("tour_id").references(() => tourSchedules.id),
+  date: date().default(getCurrentEgyptTime()),
+  status: mysqlEnum("status", ["pending", "cancelled", "booked"]),
+});
+
+export const bookings = mysqlTable("bookings", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("user_id").references(() => users.id),
+  tourId: int("tour_id").references(() => tourSchedules.id),
+  status: mysqlEnum("status", ["pending", "confirmed", "cancelled"]),
+  createdAt: date().default(getCurrentEgyptTime()),
+});
+
+export const payments = mysqlTable("payments", {
+  id: int("id").autoincrement().primaryKey(),
+  bookingId: int("booking_id").references(() => bookings.id),
+  method: mysqlEnum("method", ["manual", "auto"]),
+  status: mysqlEnum("status", ["pending", "confirmed", "cancelled"]),
+  amount: decimal("amount"),
+  transactionId: varchar("transaction_id", { length: 255 }),
+  createdAt: date().default(getCurrentEgyptTime()),
+  rejectionReason: varchar("rejection_reason", { length: 255 }),
+});
+
+export const manualPaymentMethod = mysqlTable("manual_payment_method", {
+  id: int("id").autoincrement().primaryKey(),
+  paymentId: int("payment_id").references(() => payments.id),
+  proofImage: varchar("proof_image", { length: 255 }),
+  prooftext: varchar("proof_text", { length: 255 }),
+  uploadedAt: date().default(getCurrentEgyptTime()),
+});
+
+export const homePageCover = mysqlTable("home_page_cover", {
+  id: int("id").autoincrement().primaryKey(),
+  imagePath: varchar("image_path", { length: 255 }).notNull(),
+  status: boolean("status").default(false).notNull(),
+});
+
+export const homePageFAQ = mysqlTable("home_page_faq", {
+  id: int("id").autoincrement().primaryKey(),
+  question: varchar("question", { length: 255 }).notNull(),
+  answer: text("answer").notNull(),
 });

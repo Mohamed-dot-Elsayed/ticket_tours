@@ -22,6 +22,41 @@
       "when": 1753015910358,
       "tag": "0002_magenta_hemingway",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1753164932220,
+      "tag": "0003_brave_red_hulk",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1753173115784,
+      "tag": "0004_fluffy_virginia_dare",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1753175935408,
+      "tag": "0005_fixed_oracle",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1753176467951,
+      "tag": "0006_foamy_piledriver",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "5",
+      "when": 1753177287103,
+      "tag": "0007_big_the_call",
+      "breakpoints": true
     }
   ]
 }
