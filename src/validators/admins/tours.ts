@@ -36,8 +36,8 @@ export const createTourSchema = z.object({
       .array(
         z.object({
           title: z.string(),
-          imagePath: z.string(),
-          description: z.string(),
+          imagePath: z.string().optional(),
+          description: z.string().optional(),
         })
       )
       .optional(),
