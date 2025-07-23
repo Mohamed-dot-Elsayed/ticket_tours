@@ -232,6 +232,7 @@ const deleteTour = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     const [tour] = yield db_1.db.select().from(schema_1.tours).where((0, drizzle_orm_1.eq)(schema_1.tours.id, id));
     if (!tour)
         throw new Errors_1.NotFound("Tour Not Found");
+    yield (0, deleteImage_1.deletePhotoFromServer)(new URL(tour.mainImage).pathname);
     const tourImagesList = yield db_1.db
         .select()
         .from(schema_1.tourImages)

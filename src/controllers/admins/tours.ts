@@ -291,6 +291,7 @@ export const deleteTour = async (req: Request, res: Response) => {
   const id = Number(req.params.id);
   const [tour] = await db.select().from(tours).where(eq(tours.id, id));
   if (!tour) throw new NotFound("Tour Not Found");
+  await deletePhotoFromServer(new URL(tour.mainImage).pathname);
   const tourImagesList = await db
     .select()
     .from(tourImages)
