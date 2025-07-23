@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.addData = exports.createTour = exports.getTourById = exports.getAllTours = void 0;
+exports.deleteTour = exports.addData = exports.createTour = exports.getTourById = exports.getAllTours = void 0;
 const db_1 = require("../../models/db");
 const schema_1 = require("../../models/schema");
 const response_1 = require("../../utils/response");
@@ -18,6 +18,7 @@ const Errors_1 = require("../../Errors");
 const generateSchedules_1 = require("../../utils/generateSchedules");
 const handleImages_1 = require("../../utils/handleImages");
 const uuid_1 = require("uuid");
+const deleteImage_1 = require("../../utils/deleteImage");
 const getAllTours = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const toursData = yield db_1.db.select().from(schema_1.tours);
     (0, response_1.SuccessResponse)(res, { tours: toursData }, 200);
@@ -144,9 +145,11 @@ const createTour = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         }));
     }
     if (data.images && data.images.length > 0) {
-        yield db_1.db.insert(schema_1.tourImages).values(data.images.map((imagePath) => ({
-            tourId,
-            imagePath,
+        yield db_1.db.insert(schema_1.tourImages).values(data.images.map((imagePath) => __awaiter(void 0, void 0, void 0, function* () {
+            return ({
+                tourId,
+                imagePath: yield (0, handleImages_1.saveBase64Image)(imagePath, (0, uuid_1.v4)(), req, "tourImages"),
+            });
         })));
     }
     if ((_d = data.highlights) === null || _d === void 0 ? void 0 : _d.length) {
@@ -165,11 +168,13 @@ const createTour = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             .values(data.excludes.map((content) => ({ content, tourId })));
     }
     if ((_g = data.itinerary) === null || _g === void 0 ? void 0 : _g.length) {
-        yield db_1.db.insert(schema_1.tourItinerary).values(data.itinerary.map((item) => ({
-            title: item.title,
-            imagePath: item.imagePath,
-            describtion: item.description,
-            tourId,
+        yield db_1.db.insert(schema_1.tourItinerary).values(data.itinerary.map((item) => __awaiter(void 0, void 0, void 0, function* () {
+            return ({
+                title: item.title,
+                imagePath: yield (0, handleImages_1.saveBase64Image)(item.imagePath, (0, uuid_1.v4)(), req, "itineraryImages"),
+                describtion: item.description,
+                tourId,
+            });
         })));
     }
     if ((_h = data.faq) === null || _h === void 0 ? void 0 : _h.length) {
@@ -222,3 +227,26 @@ const addData = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     (0, response_1.SuccessResponse)(res, { categories: category, currencies: currency, extras: extra }, 200);
 });
 exports.addData = addData;
+const deleteTour = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const id = Number(req.params.id);
+    const [tour] = yield db_1.db.select().from(schema_1.tours).where((0, drizzle_orm_1.eq)(schema_1.tours.id, id));
+    if (!tour)
+        throw new Errors_1.NotFound("Tour Not Found");
+    const tourImagesList = yield db_1.db
+        .select()
+        .from(schema_1.tourImages)
+        .where((0, drizzle_orm_1.eq)(schema_1.tourImages.tourId, id));
+    tourImagesList.forEach((tourIamge) => __awaiter(void 0, void 0, void 0, function* () {
+        yield (0, deleteImage_1.deletePhotoFromServer)(new URL(tourIamge.imagePath).pathname);
+    }));
+    const tourItineraryImages = yield db_1.db
+        .select()
+        .from(schema_1.tourItinerary)
+        .where((0, drizzle_orm_1.eq)(schema_1.tourItinerary.tourId, id));
+    tourItineraryImages.forEach((tourIamge) => __awaiter(void 0, void 0, void 0, function* () {
+        yield (0, deleteImage_1.deletePhotoFromServer)(new URL(tourIamge.imagePath).pathname);
+    }));
+    yield db_1.db.delete(schema_1.tours).where((0, drizzle_orm_1.eq)(schema_1.tours.id, id));
+    (0, response_1.SuccessResponse)(res, { message: "Tour Deleted Successfully" }, 200);
+});
+exports.deleteTour = deleteTour;

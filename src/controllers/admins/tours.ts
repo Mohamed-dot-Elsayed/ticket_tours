@@ -23,6 +23,7 @@ import { NotFound } from "../../Errors";
 import { generateTourSchedules } from "../../utils/generateSchedules";
 import { saveBase64Image } from "../../utils/handleImages";
 import { v4 as uuid } from "uuid";
+import { deletePhotoFromServer } from "../../utils/deleteImage";
 
 export const getAllTours = async (req: Request, res: Response) => {
   const toursData = await db.select().from(tours);
@@ -183,9 +184,9 @@ export const createTour = async (req: Request, res: Response) => {
 
   if (data.images && data.images.length > 0) {
     await db.insert(tourImages).values(
-      data.images.map((imagePath: any) => ({
+      data.images.map(async (imagePath: any) => ({
         tourId,
-        imagePath,
+        imagePath: await saveBase64Image(imagePath, uuid(), req, "tourImages"),
       }))
     );
   }
@@ -210,9 +211,14 @@ export const createTour = async (req: Request, res: Response) => {
 
   if (data.itinerary?.length) {
     await db.insert(tourItinerary).values(
-      data.itinerary.map((item: any) => ({
+      data.itinerary.map(async (item: any) => ({
         title: item.title,
-        imagePath: item.imagePath,
+        imagePath: await saveBase64Image(
+          item.imagePath,
+          uuid(),
+          req,
+          "itineraryImages"
+        ),
         describtion: item.description,
         tourId,
       }))
@@ -279,4 +285,26 @@ export const addData = async (req: Request, res: Response) => {
     { categories: category, currencies: currency, extras: extra },
     200
   );
+};
+
+export const deleteTour = async (req: Request, res: Response) => {
+  const id = Number(req.params.id);
+  const [tour] = await db.select().from(tours).where(eq(tours.id, id));
+  if (!tour) throw new NotFound("Tour Not Found");
+  const tourImagesList = await db
+    .select()
+    .from(tourImages)
+    .where(eq(tourImages.tourId, id));
+  tourImagesList.forEach(async (tourIamge) => {
+    await deletePhotoFromServer(new URL(tourIamge.imagePath!).pathname);
+  });
+  const tourItineraryImages = await db
+    .select()
+    .from(tourItinerary)
+    .where(eq(tourItinerary.tourId, id));
+  tourItineraryImages.forEach(async (tourIamge) => {
+    await deletePhotoFromServer(new URL(tourIamge.imagePath!).pathname);
+  });
+  await db.delete(tours).where(eq(tours.id, id));
+  SuccessResponse(res, { message: "Tour Deleted Successfully" }, 200);
 };
