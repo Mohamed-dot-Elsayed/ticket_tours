@@ -46,8 +46,8 @@ exports.tours = (0, mysql_core_1.mysqlTable)("tours", {
     meetingPointLocation: (0, mysql_core_1.text)("meetingPointLocation"),
     meetingPointAddress: (0, mysql_core_1.text)("meetingPointAddress"),
     points: (0, mysql_core_1.int)("points").default(0),
-    startDate: (0, mysql_core_1.date)().notNull(),
-    endDate: (0, mysql_core_1.date)().notNull(),
+    startDate: (0, mysql_core_1.timestamp)("startDate").notNull(),
+    endDate: (0, mysql_core_1.timestamp)("endDate").notNull(),
     durationDays: (0, mysql_core_1.int)("duration_days").notNull(),
     durationHours: (0, mysql_core_1.int)("duration_hours").notNull(),
     country: (0, mysql_core_1.varchar)("country", { length: 100 }).notNull(),
@@ -96,8 +96,8 @@ exports.tourSchedules = (0, mysql_core_1.mysqlTable)("tour_schedules", {
         .references(() => exports.tours.id, { onDelete: "cascade" }),
     date: (0, mysql_core_1.date)("date").notNull(),
     availableSeats: (0, mysql_core_1.int)("available_seats").notNull(),
-    startDate: (0, mysql_core_1.date)("start_date").notNull(), // Optional if your logic needs range per schedule
-    endDate: (0, mysql_core_1.date)("end_date").notNull(),
+    startDate: (0, mysql_core_1.timestamp)("start_date").notNull(), // Optional if your logic needs range per schedule
+    endDate: (0, mysql_core_1.timestamp)("end_date").notNull(),
 });
 exports.tourPrice = (0, mysql_core_1.mysqlTable)("tour_price", {
     id: (0, mysql_core_1.int)("id").autoincrement().primaryKey(),

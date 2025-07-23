@@ -1,6 +1,6 @@
 import {
   mysqlTable,
-  serial,
+  timestamp,
   int,
   varchar,
   text,
@@ -59,8 +59,8 @@ export const tours = mysqlTable("tours", {
   meetingPointLocation: text("meetingPointLocation"),
   meetingPointAddress: text("meetingPointAddress"),
   points: int("points").default(0),
-  startDate: date().notNull(),
-  endDate: date().notNull(),
+  startDate: timestamp("startDate").notNull(),
+  endDate: timestamp("endDate").notNull(),
   durationDays: int("duration_days").notNull(),
   durationHours: int("duration_hours").notNull(),
   country: varchar("country", { length: 100 }).notNull(),
@@ -115,8 +115,8 @@ export const tourSchedules = mysqlTable("tour_schedules", {
 
   date: date("date").notNull(),
   availableSeats: int("available_seats").notNull(),
-  startDate: date("start_date").notNull(), // Optional if your logic needs range per schedule
-  endDate: date("end_date").notNull(),
+  startDate: timestamp("start_date").notNull(), // Optional if your logic needs range per schedule
+  endDate: timestamp("end_date").notNull(),
 });
 
 export const tourPrice = mysqlTable("tour_price", {
