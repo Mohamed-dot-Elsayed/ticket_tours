@@ -3,6 +3,7 @@ import { catchAsync } from "../../utils/catchAsync";
 import { validate } from "../../middlewares/validation";
 import { createTourSchema } from "../../validators/admins/tours";
 import {
+  addData,
   createTour,
   getAllTours,
   getTourById,
@@ -16,4 +17,6 @@ router
   .post(validate(createTourSchema), catchAsync(createTour));
 
 router.route("/:id").get(validate(idParams), catchAsync(getTourById));
+
+router.get("/add-date", catchAsync(addData));
 export default router;

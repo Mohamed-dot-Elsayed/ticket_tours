@@ -269,3 +269,14 @@ export const createTour = async (req: Request, res: Response) => {
 
   SuccessResponse(res, { message: "Tour Created Successfully" }, 201);
 };
+
+export const addData = async (req: Request, res: Response) => {
+  const category = await db.select().from(categories);
+  const currency = await db.select().from(currencies);
+  const extra = await db.select().from(extras);
+  SuccessResponse(
+    res,
+    { categories: category, currencies: currency, extras: extra },
+    200
+  );
+};

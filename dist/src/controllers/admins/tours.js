@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createTour = exports.getTourById = exports.getAllTours = void 0;
+exports.addData = exports.createTour = exports.getTourById = exports.getAllTours = void 0;
 const db_1 = require("../../models/db");
 const schema_1 = require("../../models/schema");
 const response_1 = require("../../utils/response");
@@ -215,3 +215,10 @@ const createTour = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     (0, response_1.SuccessResponse)(res, { message: "Tour Created Successfully" }, 201);
 });
 exports.createTour = createTour;
+const addData = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const category = yield db_1.db.select().from(schema_1.categories);
+    const currency = yield db_1.db.select().from(schema_1.currencies);
+    const extra = yield db_1.db.select().from(schema_1.extras);
+    (0, response_1.SuccessResponse)(res, { categories: category, currencies: currency, extras: extra }, 200);
+});
+exports.addData = addData;
