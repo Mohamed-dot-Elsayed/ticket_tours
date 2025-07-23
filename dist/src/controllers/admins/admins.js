@@ -76,6 +76,7 @@ const deleteAdmin = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     const [admin] = yield db_1.db.select().from(schema_1.admins).where((0, drizzle_orm_1.eq)(schema_1.admins.id, id));
     if (!admin)
         throw new Errors_1.NotFound("Admin Not Found");
+    yield (0, deleteImage_1.deletePhotoFromServer)(new URL(admin.imagePath).pathname);
     yield db_1.db.delete(schema_1.admins).where((0, drizzle_orm_1.eq)(schema_1.admins.id, id));
     (0, response_1.SuccessResponse)(res, { message: "Admin Deleted Successfully" }, 200);
 });

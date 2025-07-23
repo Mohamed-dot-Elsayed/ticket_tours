@@ -70,6 +70,7 @@ export const deleteAdmin = async (req: Request, res: Response) => {
   const id = Number(req.params.id);
   const [admin] = await db.select().from(admins).where(eq(admins.id, id));
   if (!admin) throw new NotFound("Admin Not Found");
+  await deletePhotoFromServer(new URL(admin.imagePath!).pathname);
   await db.delete(admins).where(eq(admins.id, id));
   SuccessResponse(res, { message: "Admin Deleted Successfully" }, 200);
 };
