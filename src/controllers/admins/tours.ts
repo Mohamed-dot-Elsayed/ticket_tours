@@ -128,7 +128,7 @@ export const getTourById = async (req: Request, res: Response) => {
 
 export const createTour = async (req: Request, res: Response) => {
   const data = req.body;
-
+  console.log("before add");
   const [newTour] = await db
     .insert(tours)
     .values({
@@ -144,8 +144,8 @@ export const createTour = async (req: Request, res: Response) => {
         : null,
       meetingPointAddress: data.meetingPoint ? data.meetingPointAddress : null,
       points: data.points ?? 0,
-      startDate: data.startDate,
-      endDate: data.endDate,
+      startDate: new Date(data.startDate),
+      endDate: new Date(data.endDate),
       durationDays: data.durationDays,
       durationHours: data.durationHours,
       country: data.country,
@@ -153,7 +153,7 @@ export const createTour = async (req: Request, res: Response) => {
       maxUsers: data.maxUsers,
     })
     .$returningId();
-
+  console.log("tour added success");
   const tourId = newTour.id;
 
   // Insert related content if provided

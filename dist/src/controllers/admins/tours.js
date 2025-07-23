@@ -96,6 +96,7 @@ exports.getTourById = getTourById;
 const createTour = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
     const data = req.body;
+    console.log("before add");
     const [newTour] = yield db_1.db
         .insert(schema_1.tours)
         .values({
@@ -111,8 +112,8 @@ const createTour = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             : null,
         meetingPointAddress: data.meetingPoint ? data.meetingPointAddress : null,
         points: (_c = data.points) !== null && _c !== void 0 ? _c : 0,
-        startDate: data.startDate,
-        endDate: data.endDate,
+        startDate: new Date(data.startDate),
+        endDate: new Date(data.endDate),
         durationDays: data.durationDays,
         durationHours: data.durationHours,
         country: data.country,
@@ -120,6 +121,7 @@ const createTour = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         maxUsers: data.maxUsers,
     })
         .$returningId();
+    console.log("tour added success");
     const tourId = newTour.id;
     // Insert related content if provided
     if (data.prices && data.prices.length > 0) {
