@@ -53,7 +53,6 @@ exports.tours = (0, mysql_core_1.mysqlTable)("tours", {
     country: (0, mysql_core_1.varchar)("country", { length: 100 }).notNull(),
     city: (0, mysql_core_1.varchar)("city", { length: 100 }).notNull(),
     maxUsers: (0, mysql_core_1.int)("max_users").notNull(),
-    priceId: (0, mysql_core_1.int)("price_id").references(() => exports.tourPrice.id),
 });
 exports.tourImages = (0, mysql_core_1.mysqlTable)("tour_images", {
     id: (0, mysql_core_1.int)("id").autoincrement().primaryKey(),
@@ -108,6 +107,9 @@ exports.tourPrice = (0, mysql_core_1.mysqlTable)("tour_price", {
     currencyId: (0, mysql_core_1.int)("currency_id")
         .notNull()
         .references(() => exports.currencies.id),
+    tourId: (0, mysql_core_1.int)("tour_id")
+        .notNull()
+        .references(() => exports.tours.id),
 });
 exports.tourHighlight = (0, mysql_core_1.mysqlTable)("tour_highlight", {
     id: (0, mysql_core_1.int)("id").autoincrement().primaryKey(),

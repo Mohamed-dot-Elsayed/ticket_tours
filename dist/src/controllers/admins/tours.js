@@ -50,7 +50,7 @@ const getTourById = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     })
         .from(schema_1.tours)
         .leftJoin(schema_1.categories, (0, drizzle_orm_1.eq)(schema_1.tours.categoryId, schema_1.categories.id))
-        .leftJoin(schema_1.tourPrice, (0, drizzle_orm_1.eq)(schema_1.tours.priceId, schema_1.tourPrice.id))
+        .leftJoin(schema_1.tourPrice, (0, drizzle_orm_1.eq)(schema_1.tours.id, schema_1.tourPrice.tourId))
         .leftJoin(schema_1.currencies, (0, drizzle_orm_1.eq)(schema_1.tourPrice.currencyId, schema_1.currencies.id))
         .where((0, drizzle_orm_1.eq)(schema_1.tours.id, tourId));
     if (!mainTour)
@@ -95,12 +95,6 @@ exports.getTourById = getTourById;
 const createTour = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
     const data = req.body;
-    const [insertedPrice] = yield db_1.db.insert(schema_1.tourPrice).values({
-        adult: data.prices[0].adult,
-        child: data.prices[0].child,
-        infant: data.prices[0].infant,
-        currencyId: data.prices[0].currencyId,
-    });
     const [newTour] = yield db_1.db
         .insert(schema_1.tours)
         .values({
@@ -123,11 +117,19 @@ const createTour = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         country: data.country,
         city: data.city,
         maxUsers: data.maxUsers,
-        priceId: insertedPrice.insertId,
     })
         .$returningId();
     const tourId = newTour.id;
     // Insert related content if provided
+    if (data.prices && data.prices.length > 0) {
+        yield db_1.db.insert(schema_1.tourPrice).values(data.prices.map((price) => ({
+            adult: price.adult,
+            child: price.child,
+            infant: price.infant,
+            currencyId: price.currencyId,
+            tourId,
+        })));
+    }
     if (data.discounts && data.discounts.length > 0) {
         yield db_1.db.insert(schema_1.tourDiscounts).values(data.discounts.map((discount) => {
             var _a;
@@ -191,6 +193,7 @@ const createTour = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
                 child: extra.price.child,
                 infant: extra.price.infant,
                 currencyId: extra.price.currencyId,
+                tourId,
             })
                 .$returningId();
             yield db_1.db.insert(schema_1.tourExtras).values({

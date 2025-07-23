@@ -56,7 +56,7 @@ export const getTourById = async (req: Request, res: Response) => {
     })
     .from(tours)
     .leftJoin(categories, eq(tours.categoryId, categories.id))
-    .leftJoin(tourPrice, eq(tours.priceId, tourPrice.id))
+    .leftJoin(tourPrice, eq(tours.id, tourPrice.tourId))
     .leftJoin(currencies, eq(tourPrice.currencyId, currencies.id))
     .where(eq(tours.id, tourId));
 
@@ -127,12 +127,6 @@ export const getTourById = async (req: Request, res: Response) => {
 
 export const createTour = async (req: Request, res: Response) => {
   const data = req.body;
-  const [insertedPrice] = await db.insert(tourPrice).values({
-    adult: data.prices[0].adult,
-    child: data.prices[0].child,
-    infant: data.prices[0].infant,
-    currencyId: data.prices[0].currencyId,
-  });
 
   const [newTour] = await db
     .insert(tours)
@@ -156,13 +150,24 @@ export const createTour = async (req: Request, res: Response) => {
       country: data.country,
       city: data.city,
       maxUsers: data.maxUsers,
-      priceId: insertedPrice.insertId,
     })
     .$returningId();
 
   const tourId = newTour.id;
 
   // Insert related content if provided
+  if (data.prices && data.prices.length > 0) {
+    await db.insert(tourPrice).values(
+      data.prices.map((price: any) => ({
+        adult: price.adult,
+        child: price.child,
+        infant: price.infant,
+        currencyId: price.currencyId,
+        tourId,
+      }))
+    );
+  }
+
   if (data.discounts && data.discounts.length > 0) {
     await db.insert(tourDiscounts).values(
       data.discounts.map((discount: any) => ({
@@ -241,6 +246,7 @@ export const createTour = async (req: Request, res: Response) => {
           child: extra.price.child,
           infant: extra.price.infant,
           currencyId: extra.price.currencyId,
+          tourId,
         })
         .$returningId();
 

@@ -66,7 +66,6 @@ export const tours = mysqlTable("tours", {
   country: varchar("country", { length: 100 }).notNull(),
   city: varchar("city", { length: 100 }).notNull(),
   maxUsers: int("max_users").notNull(),
-  priceId: int("price_id").references(() => tourPrice.id),
 });
 
 export const tourImages = mysqlTable("tour_images", {
@@ -128,6 +127,9 @@ export const tourPrice = mysqlTable("tour_price", {
   currencyId: int("currency_id")
     .notNull()
     .references(() => currencies.id),
+  tourId: int("tour_id")
+    .notNull()
+    .references(() => tours.id),
 });
 
 export const tourHighlight = mysqlTable("tour_highlight", {
