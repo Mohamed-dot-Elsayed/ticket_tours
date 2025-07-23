@@ -5,6 +5,7 @@ import { createTourSchema } from "../../validators/admins/tours";
 import {
   addData,
   createTour,
+  deleteTour,
   getAllTours,
   getTourById,
 } from "../../controllers/admins/tours";
@@ -17,6 +18,9 @@ router
   .post(validate(createTourSchema), catchAsync(createTour));
 
 router.get("/add-data", catchAsync(addData));
-router.route("/:id").get(validate(idParams), catchAsync(getTourById));
+router
+  .route("/:id")
+  .get(validate(idParams), catchAsync(getTourById))
+  .delete(validate(idParams), catchAsync(deleteTour));
 
 export default router;
