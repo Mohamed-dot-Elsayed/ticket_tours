@@ -17,7 +17,7 @@ export const getCode = async (req: Request, res: Response) => {
   const codeUsers = await db
     .select()
     .from(promoCodeUsers)
-    .where(eq(promoCode.id, id));
+    .where(eq(promoCodeUsers.promoCodeId, id));
   SuccessResponse(res, { ...code, codeUsers }, 200);
 };
 

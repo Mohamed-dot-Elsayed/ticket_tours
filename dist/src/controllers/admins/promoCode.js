@@ -28,7 +28,7 @@ const getCode = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const codeUsers = yield db_1.db
         .select()
         .from(schema_1.promoCodeUsers)
-        .where((0, drizzle_orm_1.eq)(schema_1.promoCode.id, id));
+        .where((0, drizzle_orm_1.eq)(schema_1.promoCodeUsers.promoCodeId, id));
     (0, response_1.SuccessResponse)(res, Object.assign(Object.assign({}, code), { codeUsers }), 200);
 });
 exports.getCode = getCode;
