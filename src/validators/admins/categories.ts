@@ -6,7 +6,6 @@ export const updateCategorySchema = z.object({
   }),
   body: z.object({
     status: z.boolean().optional(),
-    name: z.string().optional(),
     imagePath: z.string().optional(),
   }),
 });

@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateCategory = exports.getAllCategory = void 0;
+exports.updateCategory = exports.getCategory = exports.getAllCategory = void 0;
 const handleImages_1 = require("../../utils/handleImages");
 const uuid_1 = require("uuid");
 const db_1 = require("../../models/db");
@@ -23,6 +23,17 @@ const getAllCategory = (req, res) => __awaiter(void 0, void 0, void 0, function*
     (0, response_1.SuccessResponse)(res, { Categories: Categorys }, 200);
 });
 exports.getAllCategory = getAllCategory;
+const getCategory = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const id = Number(req.params.id);
+    const [category] = yield db_1.db
+        .select()
+        .from(schema_1.categories)
+        .where((0, drizzle_orm_1.eq)(schema_1.categories.id, id));
+    if (!category)
+        throw new Errors_1.NotFound("Category Not Found");
+    (0, response_1.SuccessResponse)(res, { category }, 200);
+});
+exports.getCategory = getCategory;
 const updateCategory = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const id = Number(req.params.id);
     const [category] = yield db_1.db
@@ -31,14 +42,14 @@ const updateCategory = (req, res) => __awaiter(void 0, void 0, void 0, function*
         .where((0, drizzle_orm_1.eq)(schema_1.categories.id, id));
     if (!category)
         throw new Errors_1.NotFound("Category Not Found");
-    let { status, imagePath, name } = req.body;
+    let { status, imagePath } = req.body;
     if (imagePath) {
         yield (0, deleteImage_1.deletePhotoFromServer)(new URL(category.imagePath).pathname);
         imagePath = yield (0, handleImages_1.saveBase64Image)(imagePath, (0, uuid_1.v4)(), req, "categories");
     }
     yield db_1.db
         .update(schema_1.categories)
-        .set({ name, status, imagePath })
+        .set({ status, imagePath })
         .where((0, drizzle_orm_1.eq)(schema_1.categories.id, id));
     (0, response_1.SuccessResponse)(res, { message: "Category updated Succesfully" }, 200);
 });

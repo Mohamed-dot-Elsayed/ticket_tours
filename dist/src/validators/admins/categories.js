@@ -8,7 +8,6 @@ exports.updateCategorySchema = zod_1.z.object({
     }),
     body: zod_1.z.object({
         status: zod_1.z.boolean().optional(),
-        name: zod_1.z.string().optional(),
         imagePath: zod_1.z.string().optional(),
     }),
 });
