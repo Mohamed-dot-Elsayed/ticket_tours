@@ -16,7 +16,7 @@ router
   .get(catchAsync(getAllTours))
   .post(validate(createTourSchema), catchAsync(createTour));
 
+router.get("/add-date", catchAsync(addData));
 router.route("/:id").get(validate(idParams), catchAsync(getTourById));
 
-router.get("/add-date", catchAsync(addData));
 export default router;
