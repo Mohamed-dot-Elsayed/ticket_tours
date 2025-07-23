@@ -32,7 +32,7 @@ exports.createTourSchema = zod_1.z.object({
         itinerary: zod_1.z
             .array(zod_1.z.object({
             title: zod_1.z.string(),
-            imagePath: zod_1.z.string().url(),
+            imagePath: zod_1.z.string(),
             description: zod_1.z.string(),
         }))
             .optional(),
