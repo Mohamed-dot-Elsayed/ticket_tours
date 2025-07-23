@@ -19,7 +19,8 @@ exports.createCodeSchema = zod_1.z.object({
     }),
 });
 exports.updateCodeSchema = zod_1.z.object({
-    body: zod_1.z.object({
+    body: zod_1.z
+        .object({
         code: zod_1.z.string().optional(),
         discountType: zod_1.z.enum(["percentage", "amount"]).optional(),
         discountValue: zod_1.z.number().positive().optional(),
@@ -27,5 +28,9 @@ exports.updateCodeSchema = zod_1.z.object({
         status: zod_1.z.boolean().optional(),
         startDate: zod_1.z.string().optional(),
         endDate: zod_1.z.string().optional(),
+    })
+        .refine((data) => data.discountType !== "percentage" || data.discountValue <= 100, {
+        message: "Percentage discount cannot exceed 100",
+        path: ["discountValue"],
     }),
 });
